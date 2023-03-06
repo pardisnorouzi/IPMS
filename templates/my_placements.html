@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Placements</title>
+    {% include 'nav.html' %}
+  </head>
+  <body>
+    <main>
+    {% if e or msg %}
+    <div id="tmsg" style="background-color: bisque;">
+        {% if e %}
+        <span style="color: red;">{{e}}</span>
+        {% elif msg %}
+        <span style="color: green;">{{msg}}</span>
+        {% endif %}
+    </div>
+    {% endif %}
+
+      <div id="placements">
+
+        {% for row in data %}
+        <div>
+          <span style="font-weight: bolder;">Priority {{ row['prname'] }} </span>:  {{ row['platitle'] }} ( {{ row['comname']}} ) - <span style="font-weight: bolder;"">Status:</span> <span style="color:{{ row['is_c']}}">{{row['is_s']}}</span>
+          
+        </div>
+        {% endfor %}
+
+      </div>
+
+    </main>
+    <script>
+</script>
+
+  </body>
+</html>

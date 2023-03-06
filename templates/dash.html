@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IPMS Home</title>
+    {% include 'nav.html' %}
+  </head>
+
+  <body>
+    <div>
+      
+      
+
+      {% if session.username %}
+      Welcome to your Dashboard <br />
+        <p>Logged in as {{ session.username }}. <a href="{{ url_for('logout') }}">Logout</a></p>
+
+        {% if session.isapproved == 1 %}
+          <p> Your account is approved</p>
+          <p> Links to user things, info change, status of placement</p>
+        {% else %}
+          <p> Your account is not approved yet by the coordinator, please wait or contact coordinator directly</p>
+        {% endif %}
+
+
+      {% else %}
+        <p>You are not logged in.</p>
+        <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('new_user_account') }}">Create a new user</a> <br />
+      {% endif %}
+    
+    </div>
+  </body>
+</html>
