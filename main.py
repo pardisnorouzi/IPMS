@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.secret_key = 'IPMS-Secret' 
 
 data = []
-id = []
+# id = []
 
 
 @app.route('/view_placements')
