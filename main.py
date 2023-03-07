@@ -11,13 +11,36 @@ service_name = 'XEPDB1'
 conn_string = "localhost:{port}/{service_name}".format(
     port=port, service_name=service_name)
 app = Flask(__name__)
-app.secret_key = 'IPMS-Secret'
+# This is for login Sessions
+app.secret_key = 'IPMS-Secret' 
 
 data = []
 id = []
 
 
-
+@app.route('/view_placements')
+def view_placements():
+    if 'username' not in session or session['usertype'] != 3 or session['isapproved'] != 1:
+        # User is already logged in, redirect to index page
+        return redirect(url_for('index'))
+    con = oracledb.connect(user=user, password=password, dsn=conn_string)
+    cur = con.cursor()
+    data = []
+    query = 'SELECT * FROM IPMS.PLACEMENTS \
+                LEFT JOIN IPMS.STATUS ON IPMS.PLACEMENTS.status_id = IPMS.STATUS.status_id \
+                LEFT JOIN IPMS.COMPANIES ON IPMS.PLACEMENTS.company_id = IPMS.COMPANIES.company_id \
+                WHERE IPMS.STATUS.status_id = 1'
+    
+    # cur.execute('select * from IPMS.PLACEMENTS')
+    cur.execute(query)
+    for row in cur:
+        print(row)
+        data.append({"title": row[1], "desc": row[2],
+                    "skills": row[3], "status": row[10], "company": row[14],"placement_id":row[0],"row":row})
+    # Close the cursor and connection
+    cur.close()
+    con.close()
+    return render_template('view_placements.html',data=data)
 
 @app.route('/')
 def index():
@@ -35,16 +58,16 @@ def login():
         username = request.form['username']
         passh = hashlib.md5(request.form['password'].encode()).hexdigest()
         
-
+        #Connecting to database
         con = oracledb.connect(user=user, password=password, dsn=conn_string)
 
         with con.cursor() as cursor:
-            cursor.execute("SELECT IPMS.LOGIN.password, IPMS.USERS.* FROM IPMS.LOGIN LEFT JOIN IPMS.USERS ON IPMS.LOGIN.login_id = IPMS.USERS.login_id WHERE LOWER(IPMS.LOGIN.email) = LOWER(:email)", {"email": username})
+            cursor.execute("SELECT IPMS.LOGIN.password, IPMS.USERS.* FROM IPMS.LOGIN \
+                           LEFT JOIN IPMS.USERS ON IPMS.LOGIN.login_id = IPMS.USERS.login_id \
+                           WHERE LOWER(IPMS.LOGIN.email) = LOWER(:email)", {"email": username})
             result = cursor.fetchone()
 
             if result:
-                print(result)
-                print(result[7])
                 if result[6] == 0 and result[7] == 0:
                     err = 'Your account was not approved. Contact Coordinator directly for more information.'
                 elif passh == result[0]:
@@ -54,8 +77,6 @@ def login():
                     session['isapproved'] = result[7]
                     session['ispending'] = result[6]
                     session['userid'] = result[1]
-                    print(session)
-                    print(result)
                     return redirect(url_for('dash'))
                 else:
                     err = 'Invalid username or password'
