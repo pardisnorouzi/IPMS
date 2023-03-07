@@ -34,7 +34,7 @@ def view_placements():
     # cur.execute('select * from IPMS.PLACEMENTS')
     cur.execute(query)
     for row in cur:
-        print(row)
+        # print(row)
         data.append({"title": row[1], "desc": row[2],
                     "skills": row[3], "status": row[10], "company": row[14],"placement_id":row[0],"row":row})
     # Close the cursor and connection
@@ -117,16 +117,14 @@ def my_placements():
 
     if request.method == 'POST':
         puid = request.form['uid']
-        print(0)
-        print(user_id)
-        print(puid)
+
         # if user_id != puid:
         #     return redirect(url_for('index'))
         
         action = request.form['act']
-        print(1)
+
         if action == 'save_pr':
-            print(2)
+
             pr[1] = request.form['priority1']
             pr[2] = request.form['priority2']
             pr[3] = request.form['priority3']
@@ -441,7 +439,7 @@ def placements():
     # cur.execute('select * from IPMS.PLACEMENTS')
     cur.execute(query)
     for row in cur:
-        print(row)
+        # print(row)
         data.append({"title": row[1], "desc": row[2],
                     "skills": row[3], "status": row[10], "company": row[14],"placement_id":row[0],"row":row})
     # Close the cursor and connection
