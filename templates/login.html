@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    {% include 'nav.html' %}
+  </head>
+  <body>
+    <div style="padding: 20px;">
+    <form action="/login" method="POST"> 
+    <div class="form-group col-md-6">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        class="form-control"
+        id="username"
+        name="username"
+        placeholder="Username"
+        style="box-shadow: none"
+      />
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        name="password"
+        placeholder="Password"
+        style="box-shadow: none"
+      />
+    </div>
+
+     <div class="form-group col-md-6">
+      <span style="color: red;">
+        {% if err %}
+        {{ err }}
+        {% endif %}
+      </span>
+    </div>
+
+  <div style="padding: 20px;text-align: center;">
+    <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+    <button
+      type="submit"
+      class="btn btn-dark btn-sm"
+      
+    >
+      Login
+    </button>
+  </div>
+              </form>
+            </div>
+
+    <script>
+    </script>
+  </body>
+</html>

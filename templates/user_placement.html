@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Users Placement</title>
+    {% include 'nav.html' %}
+  </head>
+  <body>
+    <div style="padding: 20px;">
+    
+
+    <form action="{{ url_for("user_placement") }}" method="POST"> 
+      <p>User has selected these 3 priorities <br/> Select to approve a placement for this user:</p>
+      <input type="hidden" name="act" value="approve">
+      <input type="hidden" name="uid" value="{{user_id}}">
+
+      
+
+      
+      <div class="form-group col-md-6">
+        
+        {% for row in data %}
+        <div>
+          <input type="radio" id="pri_{{ row['prid']}}" name="placement" value="{{ row['prefid'] }}">
+          <label for="pri_{{ row['prid']}}"><span style="font-weight: bolder;">Priority {{ row['prname'] }} </span>:  {{ row['platitle'] }} ( {{ row['comname']}} )</label>
+          
+        </div>
+        {% endfor %}
+        
+      </div>
+
+  <div style="padding: 20px;text-align: center;">
+    <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+    <button
+      type="submit"
+      class="btn btn-dark btn-sm"
+      
+    >
+      Approve
+    </button>
+  </div>
+              </form>
+            </div>
+
+    <script>
+    </script>
+  </body>
+</html>

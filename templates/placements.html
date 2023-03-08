@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Placements</title>
+    {% include 'nav.html' %}
+  </head>
+  <body>
+    <main>
+    {% if e or msg %}
+    <div id="tmsg" style="background-color: bisque;">
+        {% if e %}
+        <span style="color: red;">{{e}}</span>
+        {% elif msg %}
+        <span style="color: green;">{{msg}}</span>
+        {% endif %}
+    </div>
+    {% endif %}
+    <div id="addnewplacement">
+        <button
+        type="button"
+        class="btn btn-dark btn-sm"
+        id="input1left"
+        data-bs-toggle="modal"
+        data-bs-target="#ModalNewPlacement"
+        >
+        Add a New Placement
+        </button>
+    </div>
+      <div id="selector">
+        <input
+          type="text"
+          class="form-control"
+          id="input1"
+          onkeyup="myFunction()"
+          placeholder="Placement"
+        />
+      </div>
+      <div id="table">
+        <table class="table" id="tbl">
+          <thead style="background-color: #070707; color: white">
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Description</th>
+              <th scope="col">SKills</th>
+              <th scope="col">Status</th>
+              <th scope="col">Company</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="myTable" style="background-color: rgb(235, 240, 245)">
+            <!-- first-row -->
+            {% for row in data %}
+            <tr>
+              <td>{{ row["title"] }}</td>
+              <td>{{ row["desc"] }}</td>
+              <td>{{ row["skills"] }}</td>
+              <td>{{ row["status"] }}</td>
+              <td>{{ row["company"] }}</td>
+              <td style="display: flex; gap: 10px">
+                <i
+                  class="fa fa-trash-o"
+                  aria-hidden="true"
+                  style="cursor: pointer"
+                  onclick="deletePlacement({{ row['placement_id'] }});"
+                ></i>
+                <i
+                  class="fa fa-pencil"
+                  aria-hidden="true"
+                  style="cursor: pointer"
+                  data-bs-toggle="modal"
+                  data-bs-target="#myModal"
+                ></i>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Modal Insert -->
+
+      <div
+        class="modal fade"
+        id="ModalNewPlacement"
+        tabindex="-1"
+        aria-labelledby="NewPlacement"
+        aria-hidden="true"
+      >
+
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: black">
+                    <button
+                    style="background-color: rgb(223, 221, 220)"
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/placements" method="POST">
+                        <input type="hidden" name="act" value="addplacement" />
+                        <div class="form-group col-md-6">
+                            <label for="title">Placement Title</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="title"
+                              name="title"
+                              placeholder="Title"
+                              style="box-shadow: none"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="desc">Description</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="desc"
+                              name="desc"
+                              placeholder="Description"
+                              style="box-shadow: none"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="skills">Skills</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="skills"
+                              name="skills"
+                              placeholder="Skills"
+                              style="box-shadow: none"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="status">Status</label>
+                            <br />
+                            <select
+                            name="status"
+                            id="status"
+                            style="
+                              border-color: rgb(181, 178, 178);
+                              width: 310px;
+                              height: 37px;
+                              border-radius: 7px;
+                            "
+                          >
+                            {% for row in status_types %}
+                            <option value="{{ row[0] }}">{{ row[1] }}</option>
+                            {% endfor %}
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label for="company">Company</label>
+                          <br />
+                          <select
+                          name="company"
+                          id="company"
+                          style="
+                            border-color: rgb(181, 178, 178);
+                            width: 310px;
+                            height: 37px;
+                            border-radius: 7px;
+                          "
+                        >
+                          {% for row in companies %}
+                          <option value="{{ row[0] }}">{{ row[1] }}</option>
+                          {% endfor %}
+                          </select>
+                        </div>
+                        <div style="margin-right: 6%; margin-bottom: 10px">
+                            <button
+                              type="submit"
+                              class="btn btn-dark btn-sm"
+                              data-dismiss="modal"
+                              style="float: right"
+                            >
+                              Add Placement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+      </div>
+
+      <div
+        class="modal fade"
+        id="myModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header" style="background-color: black">
+              <button
+                style="background-color: rgb(223, 221, 220)"
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form action="/submit_form" method="POST">
+
+                Edit to add as needed
+                <div style="margin-right: 6%; margin-bottom: 10px">
+                  <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+                  <button
+                    type="submit"
+                    class="btn btn-dark btn-sm"
+                    data-dismiss="modal"
+                    style="float: right"
+                  >
+                    Edit Placement
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      function myFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("input1");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td")[0];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+
+  function deletePlacement(id) {
+    // Create a new form element with the retrieved ID
+    var $form = $('<form method="POST">');
+    
+    // Add a hidden field called 'act' with a value of 'delete'
+    $('<input>').attr({
+      type: 'hidden',
+      name: 'act',
+      value: 'deleteplacement'
+    }).appendTo($form);
+
+    $('<input>').attr({
+      type: 'hidden',
+      name: 'id',
+      value: id
+    }).appendTo($form);
+    
+    // Append the form element to the body
+    $('body').append($form);
+    
+    // Submit the form
+    $form.submit();
+  }
+</script>
+
+    </script>
+  </body>
+</html>

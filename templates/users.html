@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Users</title>
+    {% include 'nav.html' %}
+  </head>
+  <body>
+    <main>
+    {% if e or msg %}
+    <div id="tmsg" style="background-color: bisque;">
+        {% if e %}
+        <span style="color: red;">{{e}}</span>
+        {% elif msg %}
+        <span style="color: green;">{{msg}}</span>
+        {% endif %}
+    </div>
+    {% endif %}
+      <div id="selector">
+        <input
+          type="text"
+          class="form-control"
+          id="input1"
+          onkeyup="myFunction()"
+          placeholder="Userame"
+        />
+      </div>
+      <div id="table">
+        <table class="table" id="tbl">
+          <thead style="background-color: #070707; color: white">
+            <tr>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Address</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Email</th>
+              <th scope="col">Status</th>
+              <th scope="col">Placement</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="myTable" style="background-color: rgb(235, 240, 245)">
+            <!-- first-row -->
+            {% for row in data %}
+            <tr>
+              <td>{{ row["fname"] }}</td>
+              <td>{{ row["lname"] }}</td>
+              <td>{{ row["add"] }}</td>
+              <td>{{ row["phone"] }}</td>
+              <td>{{ row["email"] }}</td>
+              <td>
+                {% if row["status"] == 0 %}
+                  <button type="button" class="btreg btn btn-danger" style="font-size: xx-small;" uid="{{ row['user_id'] }}">Reject</button>
+                  <button type="button" class="btapp btn btn-success" style="font-size: xx-small;" uid="{{ row['user_id'] }}">Approve</button>
+                {% elif row["status"] == 1 %} 
+                  <span style="color: green;">Approved</span>
+                {% else %}
+                  <span style="color:red">Rejected</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if row["priority"] %}
+                  <span style="font-weight: bolder;">{{row["priority"]}}</span>
+                {% elif row["priority_count"] > 0 %}
+                <button type="button" class="btpla btn btn-success" style="font-size: xx-small;" uid="{{ row['user_id'] }}">Approve</button>
+                {% else %}
+                  None
+                {% endif %}
+              </td>
+              <td style="display: flex; gap: 10px">
+                <i
+                  class="fa fa-trash-o"
+                  aria-hidden="true"
+                  style="cursor: pointer"
+                ></i>
+                <i
+                  class="fa fa-pencil"
+                  aria-hidden="true"
+                  style="cursor: pointer"
+                  data-bs-toggle="modal"
+                    data-bs-target="#myModal"
+                ></i>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Modal Insert -->
+
+
+
+      <div
+        class="modal fade"
+        id="myModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header" style="background-color: black">
+              <button
+                style="background-color: rgb(223, 221, 220)"
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              
+                To be addred as needed
+                <div style="margin-right: 6%; margin-bottom: 10px">
+                  <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+                  <button
+                    type="submit"
+                    class="btn btn-dark btn-sm"
+                    data-dismiss="modal"
+                    style="float: right"
+                  >
+                    Edit User
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      function myFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("input1");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td")[0];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+
+      $(document).ready(function() {
+        $('.btreg, .btapp').click(function() { // Trigger on click of buttons with classes `btreg` and `btapp`
+          var uid = $(this).attr('uid'); // Read the attribute for `uid`
+          var form = $('<form></form>'); // Create a form on the fly
+          form.attr('action', '{{ url_for("users") }}');
+          form.attr('method', 'post');
+
+          var hiddenInput1 = $('<input type="hidden" name="uid" value="'+uid+'"/>');
+
+          var hiddenInput2 = $('<input type="hidden" />'); // Create hidden input based on the class of the button
+          if ($(this).hasClass('btreg')) {
+            hiddenInput2.attr('name', 'act');
+            hiddenInput2.attr('value', 'reject');
+          } else if ($(this).hasClass('btapp')) {
+            hiddenInput2.attr('name', 'act');
+            hiddenInput2.attr('value', 'appr');
+          }
+
+          form.append(hiddenInput1); // Add hidden input to the form
+          form.append(hiddenInput2); // Add hidden input to the form
+
+          $('body').append(form); // Add form to the body
+          form.submit(); // Submit the form
+        });
+
+        $('.btpla').click(function() { // Trigger on click of buttons with classes `btpla`
+          var uid = $(this).attr('uid'); // Read the attribute for `uid`
+          var form = $('<form></form>'); // Create a form on the fly
+          form.attr('action', '{{ url_for("user_placement") }}');
+          form.attr('method', 'post');
+
+          var hiddenInput1 = $('<input type="hidden" name="uid" value="'+uid+'"/>');
+          var hiddenInput2 = $('<input type="hidden" name="act" value="showplacement"/>');
+
+          form.append(hiddenInput1); // Add hidden input to the form
+          form.append(hiddenInput2); // Add hidden input to the form
+
+          $('body').append(form); // Add form to the body
+          form.submit(); // Submit the form
+        });
+    });
+
+</script>
+
+    </script>
+  </body>
+</html>

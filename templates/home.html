@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IPMS Home</title>
+    {% include 'nav.html' %}
+  </head>
+
+  <body>
+    <div>
+      Welcome to Industry Placement Management System <br />
+      
+
+      {% if session.username %}
+        <p>Logged in as {{ session.username }}. <a href="{{ url_for('logout') }}">Logout</a></p>
+        <p>Continue to your dashboard. <a href="{{ url_for('dash') }}">My Dashboard</a></p>
+      {% else %}
+        <p>You are not logged in.</p>
+        <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('new_user_account') }}">Create a new user</a> <br />
+      {% endif %}
+    
+    </div>
+  </body>
+</html>

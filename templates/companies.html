@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Companies</title>
+    {% include 'nav.html' %}
+  </head>
+  <body>
+    <main>
+    {% if e or msg %}
+    <div id="tmsg" style="background-color: bisque;">
+        {% if e %}
+        <span style="color: red;">{{e}}</span>
+        {% elif msg %}
+        <span style="color: green;">{{msg}}</span>
+        {% endif %}
+    </div>
+    {% endif%}
+    <div id="addnewcompany">
+        <button
+        type="button"
+        class="btn btn-dark btn-sm"
+        id="input1left"
+        data-bs-toggle="modal"
+        data-bs-target="#ModalNewCompany"
+        >
+        Add a New Company
+        </button>
+    </div>
+      <div id="selector">
+        <input
+          type="text"
+          class="form-control"
+          id="input1"
+          onkeyup="myFunction()"
+          placeholder="Company Name"
+        />
+      </div>
+      <div id="table">
+        <table class="table" id="tbl">
+          <thead style="background-color: #070707; color: white">
+            <tr>
+              <th scope="col">Company Name</th>
+              <th scope="col">Address</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Email</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="myTable" style="background-color: rgb(235, 240, 245)">
+            <!-- first-row -->
+            {% for row in data %}
+            <tr>
+              <td>{{ row["company_name"] }}</td>
+              <td>{{ row["address"] }}</td>
+              <td>{{ row["telephone"] }}</td>
+              <td>{{ row["email"] }}</td>
+              <td style="display: flex; gap: 10px">
+                <i
+                  class="fa fa-trash-o"
+                  aria-hidden="true"
+                  style="cursor: pointer"
+                  onclick="deleteCompany({{ row['company_id'] }});"
+                ></i>
+                <i
+                  class="fa fa-pencil"
+                  aria-hidden="true"
+                  style="cursor: pointer"
+                  data-bs-toggle="modal"
+                    data-bs-target="#myModal"
+                ></i>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Modal Insert -->
+
+      <div
+        class="modal fade"
+        id="ModalNewCompany"
+        tabindex="-1"
+        aria-labelledby="NewCompany"
+        aria-hidden="true"
+      >
+
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: black">
+                    <button
+                    style="background-color: rgb(223, 221, 220)"
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/companies" method="POST">
+                        <input type="hidden" name="act" value="addcompany" />
+                        <div class="form-group col-md-6">
+                            <label for="companyname">Company Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="companyname"
+                              name="companyname"
+                              placeholder="Company Name"
+                              style="box-shadow: none"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="companyadd">Company Address</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="companyadd"
+                              name="companyadd"
+                              placeholder="Company Address"
+                              style="box-shadow: none"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="companyphone">Company Phone</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="companyphone"
+                              name="companyphone"
+                              placeholder="Company Phone"
+                              style="box-shadow: none"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="companyemail">Company Email</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="companyemail"
+                              name="companyemail"
+                              placeholder="Company Email"
+                              style="box-shadow: none"
+                            />
+                        </div>
+                        <div style="margin-right: 6%; margin-bottom: 10px">
+                            <button
+                              type="submit"
+                              class="btn btn-dark btn-sm"
+                              data-dismiss="modal"
+                              style="float: right"
+                            >
+                              Add Company
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+      </div>
+
+      <div
+        class="modal fade"
+        id="myModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header" style="background-color: black">
+              <button
+                style="background-color: rgb(223, 221, 220)"
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              Edit to be added as needed
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      function myFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("input1");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td")[0];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+
+  function deleteCompany(id) {
+    // Create a new form element with the retrieved ID
+    var $form = $('<form method="POST">');
+    
+    // Add a hidden field called 'act' with a value of 'deletecompany'
+    $('<input>').attr({
+      type: 'hidden',
+      name: 'act',
+      value: 'deletecompany'
+    }).appendTo($form);
+
+    $('<input>').attr({
+      type: 'hidden',
+      name: 'id',
+      value: id
+    }).appendTo($form);
+    
+    // Append the form element to the body
+    $('body').append($form);
+    
+    // Submit the form
+    $form.submit();
+  }
+</script>
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flask Tutorial</title>
+    {% include 'nav.html' %}
+</head>
+
+<body>
+    
+    <div style="display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;">
+    {% if e %}
+        <h5>Submission Failed<br/>{{e}}</h3>
+    {% else %}
+        <h5>Submission Successful</h3>
+    {% endif %}
+    </div>
+</body>
+
+</html>

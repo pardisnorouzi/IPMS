@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Placements</title>
+    {% include 'nav.html' %}
+  </head>
+  <body>
+    <main>
+    {% if e or msg %}
+    <div id="tmsg" style="background-color: bisque;">
+        {% if e %}
+        <span style="color: red;">{{e}}</span>
+        {% elif msg %}
+        <span style="color: green;">{{msg}}</span>
+        {% endif %}
+    </div>
+    {% endif %}
+    <form action="{{ url_for('my_placements') }}" method="POST">
+      <input type="hidden" name="act" value="save_pr">
+      <input type="hidden" name="uid" value="{{user_id}}">
+      <div id="placements">
+
+        <div class="form-group col-md-6">
+
+
+          <div class="priority-list">
+            <h2>Select your top 3 priorities:</h2>
+            <ol>
+              <li>
+                <label>Priority 1:</label>
+                <select no="1" id="priority1" class="priority" name="priority1">
+                  <option value="">- Select -</option>
+                  {% for row in data %}
+                  <option value="{{row['plid']}}">{{row['title']}} ( {{row['comname']}})</option>
+                  {% endfor %}
+
+                </select>
+              </li>
+              <li>
+                <label>Priority 2:</label>
+                <select no="2" id="priority2" class="priority" name="priority2" >
+                  <option value="">- Select -</option>
+                  {% for row in data %}
+                  <option value="{{row['plid']}}">{{row['title']}} ( {{row['comname']}})</option>
+                  {% endfor %}
+
+                </select>
+              </li>
+              <li>
+                <label>Priority 3:</label>
+                <select no="3" id="priority3" class="priority" name="priority3" >
+                  <option value="">- Select -</option>
+                  {% for row in data %}
+                  <option value="{{row['plid']}}">{{row['title']}} ( {{row['comname']}})</option>
+                  {% endfor %}
+
+                </select>
+              </li>
+            </ol>
+            <p class="error-message">Please select exactly 3 priorities.</p>
+          </div>
+          </div>
+
+          <div style="margin-right: 6%; margin-bottom: 10px">
+            <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+            <button
+              type="submit"
+              class="btn btn-dark btn-sm"
+              style="float: left"
+            >
+              Save Priority
+            </button>
+          </div>
+
+      </div>
+    </form>
+    </main>
+    <script>
+      $(document).ready(function() {
+        $("select.priority").on('change', function() {
+          var no = $(this).attr('no');
+          var selectedValue = $(this).val();
+          var tmp =$('select.priority[name!="' + $(this).attr('name') + '"] option[value="' + selectedValue + '"]');
+
+          if(no==1){
+            var selects = $("#priority2, #priority3");
+          } else if(no==2){
+            var selects = $("#priority1, #priority3");
+          }else if(no==3){
+            var selects = $("#priority1, #priority2");
+          }
+
+          selects.find('option[value="' + selectedValue + '"]').prop('disabled', true);
+          if($(this).data('back')) {
+            selects.find('option[value="' + $(this).data('back') + '"]').prop('disabled', false);
+          }
+          $(this).data('back',$(this).val());
+
+        });
+
+
+      });
+    </script>
+
+    </script>
+  </body>
+</html>
